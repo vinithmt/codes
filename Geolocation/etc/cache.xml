@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+	<placeholders>
+		<!-- header banner cache -->
+		<geolocation_nocache_headergeolocation>
+			<block>geolocation/geolocation</block>
+			<name>geolocation.geolocation</name>
+			<placeholder>geolocation_geolocation</placeholder>
+			<container>Monkey_Geolocation_Model_Nocache</container>
+			<cache_lifetime>1</cache_lifetime>
+		</geolocation_nocache_headergeolocation> 
+		<!-- home page slider desktop/tablet cache --> 
+		<geolocation_nocache_slider>
+			<block>core/template</block>
+			<name>slider</name>
+			<placeholder>slider</placeholder>
+			<container>Monkey_Geolocation_Model_Nocache</container>
+			<cache_lifetime>1</cache_lifetime>
+		</geolocation_nocache_slider>
+		 <!-- home page ads - AW_iSlider -->		 
+		<geolocation_nocache_homeads>
+			<block>awislider/block</block>
+			<name>home-ads</name>
+			<placeholder>home-ads</placeholder>
+			<container>Monkey_Geolocation_Model_Nocache</container>
+			<cache_lifetime>1</cache_lifetime>
+		</geolocation_nocache_homeads>
+	</placeholders>
+</config>

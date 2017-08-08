@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+	<global>
+		<blocks>
+            <geolocation>
+                <class>Monkey_Geolocation_Block</class>
+            </geolocation>
+        </blocks>
+        <models>
+             <geolocation>
+                <class>Monkey_Geolocation_Model</class>
+            </geolocation>
+        </models> 
+		<helpers>
+			<monkey_geolocation>
+				<class>Monkey_Geolocation_Helper</class>
+			</monkey_geolocation>
+		</helpers>
+	</global> 
+	<frontend>
+         <layout>
+            <updates>
+                <geolocation>
+                    <file>geolocation.xml</file>
+                </geolocation>
+            </updates>
+        </layout>
+    </frontend>
+</config>
