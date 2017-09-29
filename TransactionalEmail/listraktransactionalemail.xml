@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<layout>     
+    <adminhtml_adminhtml_transactionalmessages_index>   
+        <reference name="content">  
+                 <block type="transactionalemail/adminhtml_transactionalmessages" name="transactionalmessages" />  
+        </reference>
+    </adminhtml_adminhtml_transactionalmessages_index> 
+   <adminhtml_adminhtml_transactionalmessages_new>  
+     	<reference name="head"> 
+           <action method="addJs"><script>jquery/jquery.min.js</script></action>
+           <action method="addJs"><script>jquery/jquery.noconflict.js</script></action> 
+		   <action method="addItem"><type>skin_js</type><name>js/listrak_transactionalemail.js</name></action> 
+		</reference> 
+    </adminhtml_adminhtml_transactionalmessages_new> 
+    <adminhtml_adminhtml_transactionalmessages_edit>  
+     	<reference name="head"> 
+                    <action method="addJs"><script>jquery/jquery.min.js</script></action>
+           <action method="addJs"><script>jquery/jquery.noconflict.js</script></action> 
+		   <action method="addItem"><type>skin_js</type><name>js/listrak_transactionalemail.js</name></action> 
+		</reference> 
+    </adminhtml_adminhtml_transactionalmessages_edit> 
+    <adminhtml_adminhtml_transactionalqueue_index>   
+        <reference name="content">  
+                 <block type="transactionalemail/adminhtml_transactionalqueue" name="transactionalqueue" />  
+        </reference>
+    </adminhtml_adminhtml_transactionalqueue_index> 
+</layout> 

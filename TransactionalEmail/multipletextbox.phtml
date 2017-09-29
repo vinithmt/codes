@@ -1,0 +1,60 @@
+<?php
+$collection = Mage::registry('attributes_data');
+$_counter = 0;
+?>
+<tr>
+    <td  class="label">Store:</td>
+    <td colspan="10"><div id="store_view" class="error">Please select store from the transactional message tab</div></td>
+
+</tr>
+<tr>
+    <td class="label"><?php echo $this->getElement()->getLabel() ?></td>
+    <td colspan="10" class="grid hours">
+        <table id="attribute-options-table" class="data border" cellspacing="0" cellpadding="0">
+        <tbody>
+            <tr class="headings">
+                <th><?php echo $this->__('Input Field') ?></th>
+                <th><?php echo $this->__('Listrak Attribute') ?></th>
+                <th class="last"><button id="add_new_option_button" title="Add Option" type="button" disabled="true" class="scalable disabled"><span><span><span><?php echo $this->__('Add Option') ?></span></span></span></button></th>
+            </tr>
+
+<?php foreach ($collection as $_item): ?>
+<tr class="saved-option-row"   id="multiple-row-<?php echo $_counter ?>">
+    <td><input name="mulitpleField[value_<?php echo $_counter ?>][mapfield]" value="<?php echo $_item->getInputField()?>" class="input-text required-option" type="text"></td>
+    <td><select name="mulitpleField[value_<?php echo $_counter ?>][attribute]" data-selected="<?php echo $_item->getAttributeId()?>"  class="listrakAttributes"><option>Select an attribute</option><select><input type="hidden" name="mulitpleField[value_<?php echo $_counter ?>][attribute][elements]" value='<?php echo json_encode($_item->getData())  ?>' ></td>
+    <td class="a-left" id="delete_button_container_option_<?php echo $_counter ?>'">
+        <input id="delete-row-<?php echo $_counter ?>" type="hidden" class="delete-flag" name="mulitpleField[value_<?php echo $_counter ?>][delete]" value=""/> 
+        <button  data-id="<?php echo $_counter ?>"  data-editid="<?php echo $_item->getId()?>" title="Delete" type="button" class="scalable delete delete-option"><span><span><span>Delete</span></span></span></button>
+    </td>
+</tr>
+
+<?php
+$_counter++;
+endforeach;
+?>
+</tbody></table>
+<input type="hidden" id="attribute_store_id">
+
+<script type="text/javascript">//<![CDATA[
+                               //
+var ajax_attribute_url = "<?php echo Mage::helper('adminhtml')->getUrl(Mage::getConfig()->getNode('admin/routers/adminhtml/args/frontName') . '/adminhtml_transactionalmessages/getlistrakattributes'); ?>";
+
+var _urls_counter = <?php echo $_counter ?>;
+
+Validation.addAllThese([
+    ['required-option', '<?php echo Mage::helper('adminhtml')->__('Mapping field') ?>', function(v) {
+        return !Validation.get('IsEmpty').test(v);
+}]]);
+
+Validation.addAllThese([
+    ['required-option-attribute', '<?php echo Mage::helper('adminhtml')->__('Please select an attribute') ?>', function(v) {
+        if('Select an attribute' == v){
+            v ='';
+           return !Validation.get('IsEmpty').test(v);
+        }else
+            return true;
+}]]); 
+
+//]]></script>
+    </td>
+</tr>
