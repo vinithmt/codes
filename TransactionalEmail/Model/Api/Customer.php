@@ -30,7 +30,7 @@ class Listrak_TransactionalEmail_Model_Api_Customer extends Varien_Object implem
     {
         return Mage::getUrl(
             'customer/account/resetpassword',
-            array('_query' => 'id=' . $this->getObjects()->getId() . '&token=' . $this->getObjects()->getRpToken())
+            array('_query' => 'id=' . $this->getObjectOfInput()->getId() . '&token=' . $this->getObjectOfInput()->getRpToken())
         );
 
     }

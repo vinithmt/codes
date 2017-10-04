@@ -89,8 +89,8 @@ class Listrak_TransactionalEmail_Model_Api_Order extends Varien_Object implement
 
         $layout->getBlock('content')->append('items');
         $block = $layout->getBlock('items')->setData('order', $this->getObjectOfInput());
-
-        return $block->toHtml();
+        $html = preg_replace('#<script(.*?)>(.*?)</script>#is', '', $block->toHtml());
+        return $html ;
     }
 
     private function _getBillingStreet($element)

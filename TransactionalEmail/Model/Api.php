@@ -40,8 +40,9 @@ class Listrak_TransactionalEmail_Model_Api extends Listrak_TransactionalEmail_Mo
         $params = array(
             'ListID' => $this->_listId,
         );
-
+        $results =  '';
         $results = $soapClient->GetProfileHeaderCollection($params);
+       
         if (isset($results->WSException) && !is_null($results->WSException)) {
             if (isset($results->WSException->Description)) {
                 throw new Exception($results->WSException->Description);
