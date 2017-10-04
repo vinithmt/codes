@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <modules>
+        <Monkey_CustomerTier>
+            <version>0.1.2</version>
+        </Monkey_CustomerTier>
+    </modules> 
+    <global> 
+        <helpers>
+            <customertier>
+                <class>Monkey_CustomerTier_Helper</class>
+            </customertier>
+        </helpers>
+        <blocks>
+            <customertier>
+                <class>Monkey_CustomerTier_Block</class>
+            </customertier>
+        </blocks>
+        <models> 
+            <customertier> 
+                <class>Monkey_CustomerTier_Model</class> 
+                <resourceModel>monkey_customertier_resource</resourceModel> 
+            </customertier> 
+            <monkey_customertier_resource> 
+                <class>Monkey_CustomerTier_Model_Resource</class> 
+                <entities> 
+                    <customertier> 
+                        <table>monkey_customer_tier</table> 
+                    </customertier> 
+                     <customertier_store> 
+                        <table>monkey_customer_tier_store</table> 
+                    </customertier_store> 
+                </entities> 
+            </monkey_customertier_resource> 
+        </models> 
+        <resources> 
+            <customertier_setup> 
+                <setup> 
+                    <module>Monkey_CustomerTier</module> 
+                    <class>Mage_Core_Model_Resource_Setup</class> 
+                </setup> 
+                <connection>
+                    <use>core_setup</use>
+                </connection> 
+            </customertier_setup> 
+        </resources> 
+    </global>
+	<adminhtml>
+		<menu>
+			<customer>
+				<children>
+					 <customertier>
+					  <title>Customer Tier</title> 
+					  <sort_order>120</sort_order>
+                      <children>
+                         <manage_tier>
+                              <title>Manage Tier</title>
+                              <action>customertier/adminhtml_customertier</action>
+                              <sort_order>1</sort_order>
+                         </manage_tier> 
+                        </children>
+					 </customertier>
+				</children>
+			</customer>
+		</menu>
+		<layout>
+	    	<updates>
+				<customertier>
+		 			<file>customertier.xml</file>
+				</customertier>
+	   		</updates>
+	   </layout> 
+        
+	</adminhtml>
+	<admin>
+	    <routers>
+	        <customertier>
+	            <use>admin</use>
+	            <args>
+	                <module>Monkey_CustomerTier</module>
+	                <frontName>customertier</frontName>
+	            </args>
+	        </customertier>
+	    </routers>
+	</admin>
+
+    <crontab>
+        <jobs>
+            <monkey_customertier>
+                <schedule><cron_expr>*/30 * * * *</cron_expr></schedule>
+                <run><model>customertier/tierobserver::processTier</model></run>
+            </monkey_customertier>
+        </jobs>
+    </crontab> 
+</config>
