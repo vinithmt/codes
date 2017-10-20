@@ -73,24 +73,24 @@ class Listrak_TransactionalEmail_Model_Api_Order extends Varien_Object implement
 
     private function _getItemsHtml()
     {
-        $layout = Mage::app()->getLayout();
-        $update = $layout->getUpdate();
-        $update->addHandle('default');
-        $update->addHandle('sales_email_order_items');
 
-        $update->load();
+        $orderItemBlock = Mage::app()->getLayout()->createBlock('sales/order_email_items', 'items')
+            ->setTemplate('email/order/items.phtml');
+        $orderSubTotalBlock = Mage::app()->getLayout()->createBlock('sales/order_totals', 'order_totals')
+            ->setTemplate('sales/order/totals.phtml');
+        $orderTaxBlock = Mage::app()->getLayout()->createBlock('tax/sales_order_tax', 'tax')->setTemplate('tax/order/tax.phtml');
+        $orderSubTotalBlock->setChild('tax', $orderTaxBlock);
+        $orderItemBlock->setChild('order_totals', $orderSubTotalBlock);
+        $html = $orderItemBlock->setOrder($this->getObjectOfInput())
+                    ->addItemRender(
+                        'default',
+                        'sales/order_email_items_order_default',
+                        'email/order/items/order/default.phtml'
+                    )->toHtml();
 
-        $layout->generateXml();
-        $layout->generateBlocks();
-        $layout->getBlock('root')->setTemplate('page/1column.phtml');
+        $html = preg_replace('#<script(.*?)>(.*?)</script>#is', '', $html);
+        return $html;
 
-        //set block from layout handle <block type="sales/order_email_items" name="items" template="email/order/items.phtml">
-        $layout->getBlock('content')->setChild('items', $layout->getBlock('items'));
-
-        $layout->getBlock('content')->append('items');
-        $block = $layout->getBlock('items')->setData('order', $this->getObjectOfInput());
-        $html = preg_replace('#<script(.*?)>(.*?)</script>#is', '', $block->toHtml());
-        return $html ;
     }
 
     private function _getBillingStreet($element)
@@ -189,27 +189,24 @@ class Listrak_TransactionalEmail_Model_Api_Order extends Varien_Object implement
 
     private function _getShipmentTrackingHTML()
     {
-        $_shipment = $this->getObjects()['shipment'];
-        $_order    = $this->getObjects()['order'];
+        $_shipment   = $this->getObjects()['shipment'];
+        $_order      = $this->getObjects()['order'];
         $trackingUrl = '';
         foreach ($_shipment->getAllTracks() as $_item) {
             $configTrackingUrlPath = 'shipping/trackingurl/' . str_replace('productmatrix', 'premiumrate', $_order->getShippingMethod());
             //replace productmatrix to premiumrate because it apperas with this code when render shipping settings page
             $trackingUrl = Mage::getStoreConfig($configTrackingUrlPath);
-            if ($trackingUrl){
+            if ($trackingUrl) {
                 $trackingUrl = '<a href="' . $trackingUrl . Mage::helper('core')->escapeHtml($_item->getNumber()) . '">' . Mage::helper('core')->escapeHtml($_item->getNumber()) . '</a>';
-            }
-            elseif ($this->getConfigData($_item->getCarrierCode())){
+            } elseif ($this->getConfigData($_item->getCarrierCode())) {
                 $trackingUrl = '<a href="https://tools.usps.com/go/TrackConfirmAction?qtc_tLabels1=' . Mage::helper('core')->escapeHtml($_item->getNumber()) . '">' . Mage::helper('core')->escapeHtml($_item->getNumber()) . '</a>';
-            }
-            elseif ($_item->getCarrierCode() == 'ups'){
+            } elseif ($_item->getCarrierCode() == 'ups') {
                 $trackingUrl = '<a href="http://www.apps.ups.com/WebTracking/track?track=yes&trackNums=' . Mage::helper('core')->escapeHtml($_item->getNumber()) . '">' . Mage::helper('core')->escapeHtml($_item->getNumber()) . '</a>';
-            }
-            else{
+            } else {
                 $trackingUrl = Mage::helper('core')->escapeHtml($_item->getNumber());
             }
-            
-        } 
+
+        }
         return $trackingUrl;
     }
 
