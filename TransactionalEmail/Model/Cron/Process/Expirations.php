@@ -11,5 +11,6 @@ class Listrak_TransactionalEmail_Model_Cron_Process_Expirations extends ST_Monke
     protected function _sendEmail($customer, $template, $vars = null)
     {
     	Mage::getModel("transactionalemail/api")->sendSweetToothEmail($customer, $template, $vars);
+        return true;
     }
 }

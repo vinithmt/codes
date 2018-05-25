@@ -68,6 +68,10 @@ class Listrak_TransactionalEmail_Model_Api_Order extends Varien_Object implement
             case 'tracking_content':
                 return $this->_getShipmentTrackingHTML();
                 break;
+            case 'custom_shipping_description':
+                return $this->_getShippingDescription();
+                break;
+
         }
     }
 
@@ -82,11 +86,11 @@ class Listrak_TransactionalEmail_Model_Api_Order extends Varien_Object implement
         $orderSubTotalBlock->setChild('tax', $orderTaxBlock);
         $orderItemBlock->setChild('order_totals', $orderSubTotalBlock);
         $html = $orderItemBlock->setOrder($this->getObjectOfInput())
-                    ->addItemRender(
-                        'default',
-                        'sales/order_email_items_order_default',
-                        'email/order/items/order/default.phtml'
-                    )->toHtml();
+            ->addItemRender(
+                'default',
+                'sales/order_email_items_order_default',
+                'email/order/items/order/default.phtml'
+            )->toHtml();
 
         $html = preg_replace('#<script(.*?)>(.*?)</script>#is', '', $html);
         return $html;
@@ -109,7 +113,7 @@ class Listrak_TransactionalEmail_Model_Api_Order extends Varien_Object implement
     private function _getShippingStreet($element)
     {
 
-        if (!$this->getObjectOfInput()->getShippingAddress()->getFormated('html')) {
+        if (!$this->getObjectOfInput()->getShippingAddress()) {
 
             if ($element == 'street') {
                 return $this->getObjectOfInput()->getBillingAddress()->getStreet()[0];
@@ -135,14 +139,15 @@ class Listrak_TransactionalEmail_Model_Api_Order extends Varien_Object implement
     private function _getBillingData($element)
     {
         return $this->getObjectOfInput()->getBillingAddress()->getData(str_replace('billing_', '', $element));
-        // return $this->getObjectOfInput()->getBillingAddress()->getFormated('text');
 
     }
 
     private function _getShippingData($element)
     {
-        if (!$this->getObjectOfInput()->getShippingAddress()->getFormated('html')) {
-            return $this->getObjectOfInput()->getBillingAddress()->getData(str_replace('billing_', '', $element));
+
+        if (!$this->getObjectOfInput()->getShippingAddress()) {
+            return $this->getObjectOfInput()->getBillingAddress()->getData(str_replace('shipping_', '', $element));
+
         } else {
             return $this->getObjectOfInput()->getShippingAddress()->getData(str_replace('shipping_', '', $element));
         }
@@ -179,7 +184,9 @@ class Listrak_TransactionalEmail_Model_Api_Order extends Varien_Object implement
 
     private function _getShippingCountry()
     {
-        if (!$this->getObjectOfInput()->getShippingAddress()->getFormated('html')) {
+
+        if (!$this->getObjectOfInput()->getShippingAddress()) {
+
             return $this->getObjectOfInput()->getBillingAddress()->getCountryModel()->getName();
         } else {
             return $this->getObjectOfInput()->getShippingAddress()->getCountryModel()->getName();
@@ -192,22 +199,30 @@ class Listrak_TransactionalEmail_Model_Api_Order extends Varien_Object implement
         $_shipment   = $this->getObjects()['shipment'];
         $_order      = $this->getObjects()['order'];
         $trackingUrl = '';
+        $returnResult = '';
         foreach ($_shipment->getAllTracks() as $_item) {
-            $configTrackingUrlPath = 'shipping/trackingurl/' . str_replace('productmatrix', 'premiumrate', $_order->getShippingMethod());
-            //replace productmatrix to premiumrate because it apperas with this code when render shipping settings page
-            $trackingUrl = Mage::getStoreConfig($configTrackingUrlPath);
-            if ($trackingUrl) {
-                $trackingUrl = '<a href="' . $trackingUrl . Mage::helper('core')->escapeHtml($_item->getNumber()) . '">' . Mage::helper('core')->escapeHtml($_item->getNumber()) . '</a>';
-            } elseif ($this->getConfigData($_item->getCarrierCode())) {
-                $trackingUrl = '<a href="https://tools.usps.com/go/TrackConfirmAction?qtc_tLabels1=' . Mage::helper('core')->escapeHtml($_item->getNumber()) . '">' . Mage::helper('core')->escapeHtml($_item->getNumber()) . '</a>';
-            } elseif ($_item->getCarrierCode() == 'ups') {
+            //Assuming we are only dealing with ups and usps. #1877
+           if (strtolower($_item->getCarrierCode()) =='usps') {
+                $trackingUrl = ' <a href="https://tools.usps.com/go/TrackConfirmAction?qtc_tLabels1=' . Mage::helper('core')->escapeHtml($_item->getNumber()) . '">' . Mage::helper('core')->escapeHtml($_item->getNumber()) . '</a> ';
+            } elseif (strtolower($_item->getCarrierCode()) == 'ups') {
                 $trackingUrl = '<a href="http://www.apps.ups.com/WebTracking/track?track=yes&trackNums=' . Mage::helper('core')->escapeHtml($_item->getNumber()) . '">' . Mage::helper('core')->escapeHtml($_item->getNumber()) . '</a>';
             } else {
                 $trackingUrl = Mage::helper('core')->escapeHtml($_item->getNumber());
             }
-
+             $returnResult .= '<div style="float:left"> '.Mage::helper('core')->escapeHtml($_item->getTitle()).' : '.$trackingUrl.'</div><br>';
         }
-        return $trackingUrl;
+        return $returnResult;
+    }
+
+    private function _getShippingDescription()
+    {
+
+        if (!$this->getObjectOfInput()->getShippingDescription()) {
+            return 'None';
+        }
+
+        return $this->getObjectOfInput()->getShippingDescription();
+
     }
 
 }

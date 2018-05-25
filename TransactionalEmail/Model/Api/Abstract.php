@@ -43,8 +43,15 @@ class Listrak_TransactionalEmail_Model_Api_Abstract
      *
      * @return     SoapClient  Returns the soap object
      */
-    protected function _accessApi()
-    {
+    protected function _accessApi($storeId=NULL)
+    {       
+        if($storeId != NULL)
+        {
+            $this->_apiUsername = Mage::getStoreConfig('remarketing/listrakapi/listrakApiUsername', $storeId);
+            $this->_apiPassword = Mage::getStoreConfig('remarketing/listrakapi/listrakApiPassword', $storeId);
+            $this->_apiHeader   = Mage::getStoreConfig('remarketing/listrakapi/listrakApiHeader', $storeId);
+            $this->_apiUrl      = Mage::getStoreConfig('remarketing/listrakapi/listrakApiUrl', $storeId);
+        }
 
         $creds = array(
             'UserName' => $this->_apiUsername,
@@ -66,12 +73,10 @@ class Listrak_TransactionalEmail_Model_Api_Abstract
      * Sets the list identifier of listrak
      */
     private function _setListId()
-    {
-
+    { 
         if (Mage::getSingleton('admin/session')->isLoggedIn()) {
             $storeId       = Mage::app()->getRequest()->getParam('store_id');
-            $this->_listId = Mage::getStoreConfig('remarketing/listraklistids/listrakListId', $storeId);
-
+            $this->_listId = Mage::getStoreConfig('remarketing/listraklistids/listrakListId', $storeId); 
         } else {
             $this->_listId = Mage::getStoreConfig('remarketing/listraklistids/listrakListId');
         }
@@ -127,7 +132,7 @@ class Listrak_TransactionalEmail_Model_Api_Abstract
      */
     protected function _generateParams()
     { 
-        $this->_transactionalParams = array('EmailAddress' =>$this->_emailPostedData['emailInfos']);
+        $this->_transactionalParams = array('EmailAddress' =>$this->_emailPostedData['emailInfos'], 'storeId'=>$this->_emailPostedData['storeId']);
         $this->_mapValuesWithAttributes(); 
     }
 
@@ -152,16 +157,17 @@ class Listrak_TransactionalEmail_Model_Api_Abstract
     /**
      * Sends a transactional message.
      */
-    protected function _sendTransactionalMessage()
+    protected function _sendTransactionalMessage($storeId=NULL)
     { 
     
         if ($this->_queueId == null) {
             $this->_generateParams();
+            $storeId =$this->_emailPostedData['storeId'];
         } 
 
 
         try {
-            $soapClient = $this->_accessApi();
+            $soapClient = $this->_accessApi($storeId);  
             $rest       = $soapClient->SendTransactionalMessage($this->_transactionalParams);
             switch ($rest->SendTransactionalMessageResult) {
                 case 'FailedInvalidEmailAddress':

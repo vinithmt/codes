@@ -111,7 +111,7 @@
          </listrak_transactional_process_failed_emails>
           <listrak_transactionalemail_delete_success_emails>
             <schedule>
-               <cron_expr>0 0 * * *</cron_expr>
+               <cron_expr>0 0 */3 * *</cron_expr>
             </schedule>
             <run>
                <model>transactionalemail/observer::processQueueErase</model>

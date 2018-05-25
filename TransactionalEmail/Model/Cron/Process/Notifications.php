@@ -1,4 +1,4 @@
-<?php
+<?php 
 class Listrak_TransactionalEmail_Model_Cron_Process_Notifications extends ST_MonkeySports_Model_Cron_Process_Notifications
 {
      /**
@@ -9,7 +9,8 @@ class Listrak_TransactionalEmail_Model_Cron_Process_Notifications extends ST_Mon
      * @param      <type>  $vars      The variables
      */
     protected function _sendEmail($customer, $template, $vars = null)
-    {    	 
+    {   
     	Mage::getModel('transactionalemail/api')->sendSweetToothEmail($customer, $template, $vars);
+        return true;
     }
 }

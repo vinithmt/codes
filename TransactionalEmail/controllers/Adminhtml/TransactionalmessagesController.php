@@ -227,7 +227,7 @@ class Listrak_TransactionalEmail_Adminhtml_TransactionalmessagesController exten
                                 data-data_type="' . $valueAttributes->DataType . '"
                                 data-max_length="' . $valueAttributes->MaxLength . '"
                                 data-position="' . $valueAttributes->Position . '"
-                                value="' . $valueAttributes->AttributeID . '">&nbsp;&nbsp;&nbsp;'.$value->Name.'/'.$valueAttributes->Name . '</option>';
+                                value="' . $valueAttributes->AttributeID . '">&nbsp;&nbsp;&nbsp;'.$valueAttributes->Name.'/'.$value->Name.'</option>';
                 }
                 $html .= '</optgroup>';
             }

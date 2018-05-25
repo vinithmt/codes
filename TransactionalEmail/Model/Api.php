@@ -32,7 +32,11 @@ class Listrak_TransactionalEmail_Model_Api extends Listrak_TransactionalEmail_Mo
     public function getAttributes()
     {
 
-        $soapClient = $this->_accessApi();
+        $storeId  = NULL;
+        if (Mage::getSingleton('admin/session')->isLoggedIn()) {
+            $storeId       = Mage::app()->getRequest()->getParam('store_id'); 
+        } 
+        $soapClient = $this->_accessApi($storeId);
         if ($this->_listId == '') {
             throw new Exception('List id not found in this store. Please configure in the System > Config > Customer > Listrak > Api.');
         }
@@ -48,6 +52,7 @@ class Listrak_TransactionalEmail_Model_Api extends Listrak_TransactionalEmail_Mo
                 throw new Exception($results->WSException->Description);
             }
         }
+        
         $attributes = $results->GetProfileHeaderCollectionResult->WSProfileHeader;
         return $attributes;
 
@@ -72,11 +77,14 @@ class Listrak_TransactionalEmail_Model_Api extends Listrak_TransactionalEmail_Mo
 
     public function resendMail($queueData)
     {
+        $storeId= NULL;
         $this->_transactionalParams     = json_decode($queueData->getApiRequest(), true);
         $this->_emailPostedData['code'] = $queueData->getTransactionalCode();
         $this->_queueId                 = $queueData->getId();
         $this->_retries                 = $queueData->getRetries();
-        $this->_sendTransactionalMessage();
+        if(array_key_exists("storeId",$this->_transactionalParams))
+            $storeId = $this->_transactionalParams['storeId'];
+        $this->_sendTransactionalMessage($storeId);
     }
 
     public function sendSweetToothEmail($customer, $template, $vars = null)
